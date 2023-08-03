@@ -32,7 +32,7 @@ follow the instructions in Step 1: Setting up AWS Chatbot with Slack. https://do
    3. The zip files **must** be named as chatbot_cost_explorer01.py.zip, chatbot_launchtime_checks01.py.zip, chatbot_unhealthy_workspace_checks01.py.zip and chatbot_workspace_latency_checks01.py.zip. 
 4. Create an S3 bucket in the EUC account and upload zip files you created in the previous step with the chatbot.yaml file. The files should appear in the bucket as S3BucketName/chatbot_cost_explorer01.py.zip.
 ![Contents in S3 Bucket](/images/s3bucket.jpg "Contents of S3 Bucket")
-5. Take note of the S3 Object URL of the chatbot.yaml cloudformation template and the name of the bucket. For example: https://nuttinee-th-euc.s3.ap-southeast-1.amazonaws.com/chatbot.yaml is the S3 Object URL of the CloudFormation template and nuttinee-th-euc is the S3 bucket name.   
+5. Take note of the S3 Object URL of the chatbot.yaml cloudformation template and the name of the bucket. For example: https://euc-chatbot-bucket.s3.ap-southeast-1.amazonaws.com/chatbot.yaml is the S3 Object URL of the CloudFormation template and euc-chatbot-bucket is the S3 bucket name.   
 6. In the EUC AWS account, navigate to the CloudFormation console and create a new stack using the S3 Object URL of the chatbot.yaml file and the S3 bucket name.
 7. The required resources for the Chatbot service, such as the SNS topic, IAM role, IAM policy, and Lambda functions, will be created.
 

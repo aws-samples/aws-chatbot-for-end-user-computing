@@ -46,7 +46,7 @@ Metadata:
 Parameters:
   S3BucketName:
     Type: String
-#    Default: appc-chatbot-code
+#    Default: your-company-euc-chatbot-bucket
     Description: S3 Bucket where the code is hosted. For example appc-chatbot-code
   SlackOrTeams:
     Description: Slack or Teams? Choose your chat client
@@ -57,21 +57,21 @@ Parameters:
     ConstraintDescription: Must specify whether its Slack or MS Teams.
   SlackChannelId:
     Type: String
-    Description: Create new Slack channel for AWS Chatbot. For example C054GD11GF5 Skip this step if you are using Microsoft Teams.
+    Description: Create new Slack channel for AWS Chatbot. For example C069GD11GF5 Skip this step if you are using Microsoft Teams.
   SlackWorkspaceId:
     Type: String
-    Description: Provide the Workspace ID for your Slack tenant. For example T016M3G1GHZ. Skip this step if you are using Microsoft Teams.
+    Description: Provide the Workspace ID for your Slack tenant. For example T069M3G1GHZ. Skip this step if you are using Microsoft Teams.
   MicrosoftTeamsTenantId:
     Type: String
-    Description: Provide the Microsoft Teams tenant ID. For example 86e31a22-27db-4bb8-8e07-5999d13cc907 Skip this step if you are using Slack.
+    Description: Provide the Microsoft Teams tenant ID. For example 69e31a22-27db-4bb8-8e07-5699d13cc907 Skip this step if you are using Slack.
     MaxLength: 100
   MicrosoftTeamsTeamId:
     Type: String
-    Description: Provide the Microsoft Teams Team ID for your tenant. For example d608790a-af3b-47c9-ac9c-e209c1947cd5 Skip this step if you are using Slack.
+    Description: Provide the Microsoft Teams Team ID for your tenant. For example d669790a-af3b-47c9-ac9c-e209c1947cd5 Skip this step if you are using Slack.
     MaxLength: 100
   MicrosoftTeamsChannelId:
     Type: String
-    Description: Create new Teams channel for AWS Chatbot. For example 19%3a8947f44d87a74c65a564a4ab186741c9%40thread.tacv2 Skip this step if you are using Slack.
+    Description: Create new Teams channel for AWS Chatbot. For example 19%3a8947f44d89a74c65a564a4ab186741c9%40thread.tacv2 Skip this step if you are using Slack.
     MaxLength: 100
 Conditions:
   CreateSlackResources: !Equals [!Ref SlackOrTeams, Slack]
