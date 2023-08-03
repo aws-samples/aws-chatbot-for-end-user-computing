@@ -1,6 +1,6 @@
 Monitor and automate AWS End User Computing(EUC) with AWS Chatbot
 --------------------------------------
-This serves as README for the blogpost [Monitor and automate Amazon EUC with AWS Chatbot](https://amazon.awsapps.com/workdocs/index.html#/document/4dbd3e580cefb02d50341ce3bb6944c75b636c8d391e2ba614750a681d91fa7f) on the AWS Desktop and Application Streaming channel.
+This serves as README for the blogpost **Monitor and automate Amazon EUC with AWS Chatbot** on the AWS Desktop and Application Streaming channel.
 
 ![Architecture diagram](/images/architecture.png "Architecture")
 
