@@ -1,0 +1,262 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Parameters:
+        - S3BucketName
+        - SlackOrTeams
+      -
+        Parameters:
+          - SlackChannelId
+          - SlackWorkspaceId
+      -
+        Parameters:
+          - MicrosoftTeamsTenantId
+          - MicrosoftTeamsTeamId
+          - MicrosoftTeamsChannelId
+    ParameterLabels:
+      S3BucketName:
+        default: "S3 Bucket name"
+      SlackOrTeams:
+        default: "Slack or Teams?"
+      SlackChannelId:
+        default: "Slack Channel ID"
+      SlackWorkspaceId:
+        default: "Slack Workspace ID"
+      MicrosoftTeamsTenantId:
+        default: "Microsoft Teams Tenant ID"
+      MicrosoftTeamsTeamId:
+        default: "Microsoft Teams Team ID"
+      MicrosoftTeamsChannelId:
+        default: "Microsoft Teams Channel ID"
+
+#FETCH Microsoft Teams TEAM ID
+#Click on the (…) three dots present on the right side of the team name
+#From the flyout menu, click on Get link to team
+#A popup with the link would appear and in this link the value of group id is the teams Id
+
+#FETCH Microsoft Teams CHANNEL ID
+# To fetch the channel ID using the UI we need to follow the same process as mentioned above but we will get the channel id from the link after the path /channel from the link.
+#Navigate to the channel for which we require the id
+#Click on the (…) three dots present on the right side of the channel name
+#From the flyout menu as displayed in the image below click on Get link to channel
+#A popup with the link would appear with the channel id mentioned after the path /channel
+
+Parameters:
+  S3BucketName:
+    Type: String
+#    Default: appc-chatbot-code
+    Description: S3 Bucket where the code is hosted. For example appc-chatbot-code
+  SlackOrTeams:
+    Description: Slack or Teams? Choose your chat client
+    Type: String
+    AllowedValues:
+      - Slack
+      - Teams
+    ConstraintDescription: Must specify whether its Slack or MS Teams.
+  SlackChannelId:
+    Type: String
+    Description: Create new Slack channel for AWS Chatbot. For example C054GD11GF5 Skip this step if you are using Microsoft Teams.
+  SlackWorkspaceId:
+    Type: String
+    Description: Provide the Workspace ID for your Slack tenant. For example T016M3G1GHZ. Skip this step if you are using Microsoft Teams.
+  MicrosoftTeamsTenantId:
+    Type: String
+    Description: Provide the Microsoft Teams tenant ID. For example 86e31a22-27db-4bb8-8e07-5999d13cc907 Skip this step if you are using Slack.
+    MaxLength: 100
+  MicrosoftTeamsTeamId:
+    Type: String
+    Description: Provide the Microsoft Teams Team ID for your tenant. For example d608790a-af3b-47c9-ac9c-e209c1947cd5 Skip this step if you are using Slack.
+    MaxLength: 100
+  MicrosoftTeamsChannelId:
+    Type: String
+    Description: Create new Teams channel for AWS Chatbot. For example 19%3a8947f44d87a74c65a564a4ab186741c9%40thread.tacv2 Skip this step if you are using Slack.
+    MaxLength: 100
+Conditions:
+  CreateSlackResources: !Equals [!Ref SlackOrTeams, Slack]
+  CreateTeamsResources: !Equals [!Ref SlackOrTeams, Teams]
+
+Resources:
+# Resources to create Lambda Functions. Once we create Lambda functions, we will proceed creating chatbot service
+  EUCChatbotExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: GetMetricDataPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: cloudwatch:GetMetricData
+                Resource: '*'
+                Condition:
+                  ForAllValues:StringEquals:
+                    cloudwatch:namespace:
+                      - 'AWS/WorkSpaces'
+                      - 'AWS/AppStream'
+        - PolicyName: DescribeWorkSpacesPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - workspaces:DescribeWorkspaces
+                Resource: "*"
+        - PolicyName: WriteCloudWatchLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Effect: Allow
+              Resource: arn:aws:logs:*:*:*
+        - PolicyName: GetCostsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - ce:GetCostAndUsage
+                Effect: Allow
+                Resource: "*"
+
+  UnHealthyWorkSpacesCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      MemorySize: 4096
+      ReservedConcurrentExecutions: 50
+      Timeout: 900
+      Handler: chatbot_unhealthy_workspace_checks01.lambda_handler
+      Role: !GetAtt EUCChatbotExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3BucketName
+        S3Key: chatbot_unhealthy_workspace_checks01.py.zip
+      Runtime: python3.10
+      Environment:
+        Variables:
+          LOG_GROUP_NAME: /aws/lambda/${AWS::StackName}-UnHealthyWorkSpacesCheckFunction
+  LaunchTimeCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      MemorySize: 4096
+      ReservedConcurrentExecutions: 10
+      Timeout: 900
+      Handler: chatbot_launchtime_checks01.lambda_handler
+      Role: !GetAtt EUCChatbotExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3BucketName
+        S3Key: chatbot_launchtime_checks01.py.zip
+      Runtime: python3.10
+  LatencyCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      MemorySize: 4096
+      ReservedConcurrentExecutions: 10
+      Timeout: 900
+      Handler: chatbot_workspace_latency_checks01.lambda_handler
+      Role: !GetAtt EUCChatbotExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3BucketName
+        S3Key: chatbot_workspace_latency_checks01.py.zip
+      Runtime: python3.10
+  CurrentEUCBillCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      MemorySize: 4096
+      ReservedConcurrentExecutions: 10
+      Timeout: 900
+      Handler: chatbot_cost_explorer01.lambda_handler
+      Role: !GetAtt EUCChatbotExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3BucketName
+        S3Key: chatbot_cost_explorer01.py.zip
+      Runtime: python3.10
+  ChatbotServicePolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lambda:invokeAsync'
+              - 'lambda:invokeFunction'
+              - 'cloudwatch:Describe*'
+              - 'cloudwatch:Get*'
+              - 'cloudwatch:List*'
+            Resource:
+              - '*'
+  ChatbotServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - chatbot.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/ReadOnlyAccess'
+        - 'arn:aws:iam::aws:policy/AWSSupportAccess'
+        - 'arn:aws:iam::aws:policy/AWSResourceExplorerReadOnlyAccess'
+        - !Ref ChatbotServicePolicy
+  SlackChannelConfiguration:
+    Type: AWS::Chatbot::SlackChannelConfiguration
+    Condition: CreateSlackResources
+    Properties:
+      ConfigurationName: AWSChatbotAmazonEUCforSlack
+      GuardrailPolicies:
+        - 'arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess'
+        - 'arn:aws:iam::aws:policy/AWSLambda_FullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonAppStreamFullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonWorkSpacesAdmin'
+        - 'arn:aws:iam::aws:policy/CloudWatchFullAccess'
+      IamRoleArn: !GetAtt ChatbotServiceRole.Arn
+      LoggingLevel: 'ERROR'
+      #Slack Channel Requirements below
+      # 1) Provide a new Slack channel ID and not the one that is already configured with AWS Chatbot.
+      # 2) The channel ID of Slack can be retrieved by opening the Slack channel in the browser. For egs, it looks like this - https://app.slack.com/client/T016M3G1GHZ/C05EBDQRWKV where C05EBDQRWKV is the channel ID
+      # 3) The chatbot @aws should be invited to the channel
+      SlackChannelId: !Ref SlackChannelId
+      SlackWorkspaceId: !Ref SlackWorkspaceId
+      SnsTopicArns:
+        - !Ref EUCChatbotTopic
+      UserRoleRequired: No
+  MSTeamsChannelConfiguration:
+    Type: AWS::Chatbot::MicrosoftTeamsChannelConfiguration
+    Condition: CreateTeamsResources
+    Properties:
+      ConfigurationName: AWSChatbotAmazonEUCforTeams
+      GuardrailPolicies:
+        - 'arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess'
+        - 'arn:aws:iam::aws:policy/AWSLambda_FullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonAppStreamFullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonWorkSpacesAdmin'
+        - 'arn:aws:iam::aws:policy/CloudWatchFullAccess'
+      IamRoleArn: !GetAtt ChatbotServiceRole.Arn
+      LoggingLevel: 'ERROR'
+      SnsTopicArns:
+        - !Ref EUCChatbotTopic
+      TeamId: !Ref MicrosoftTeamsTeamId
+      TeamsChannelId: !Ref MicrosoftTeamsChannelId
+      TeamsTenantId: !Ref MicrosoftTeamsTenantId
+      UserRoleRequired: No
+  EUCChatbotTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: "https://global.sns-api.chatbot.amazonaws.com"
+          Protocol: "https"
