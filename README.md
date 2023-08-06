@@ -20,7 +20,7 @@ Setup Process
 -------------
 1. To configure a Slack chat client, 
 follow the instructions in Step 1: Setting up AWS Chatbot with Slack. **https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html**
-   1. Follow steps 1–5. 
+   1. Follow steps 1 to 5. 
    2. Add AWS Chatbot to the Slack channel by following step 14.
 2. To configure a Microsoft Teams client, follow the instructions in Step 1: Setting up AWS Chatbot with Microsoft Teams. **https://docs.aws.amazon.com/chatbot/latest/adminguide/teams-setup.html#teams-client-setup**
    1. Follow steps 1 to 5.
