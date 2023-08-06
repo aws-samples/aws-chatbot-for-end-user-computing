@@ -18,19 +18,19 @@ Prerequisites
 
 Setup Process 
 -------------
-1. To configure a Slack client, 
-follow the instructions in Step 1: Setting up AWS Chatbot with Slack. https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html
-   1. Follow steps 1 to 5 in the link. 
-   2. Add AWS Chatbot to the Slack channel. Refer to step14 in the previous link.
-2. To configure a Microsoft Teams client, follow the instructions in Step 1: Setting up AWS Chatbot with Microsoft Teams. https://docs.aws.amazon.com/chatbot/latest/adminguide/teams-setup.html#teams-client-setup
-   1. Follow steps 1 to 5 in the link.
-   2. Add AWS Chatbot to your team. Refer to step 14 in the link. 
-3. Create Lambda deployment packages.
-   1. Download and create zip files of the python files in the source directory [https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source](https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source)
-   2. You may use the zip command in Linux to do so. 
+1. To configure a Slack chat client, 
+follow the instructions in Step 1: Setting up AWS Chatbot with Slack. **https://docs.aws.amazon.com/chatbot/latest/adminguide/slack-setup.html**
+   1. Follow steps 1–5. 
+   2. Add AWS Chatbot to the Slack channel by following step 14.
+2. To configure a Microsoft Teams client, follow the instructions in Step 1: Setting up AWS Chatbot with Microsoft Teams. **https://docs.aws.amazon.com/chatbot/latest/adminguide/teams-setup.html#teams-client-setup**
+   1. Follow steps 1 to 5.
+   2. Add AWS Chatbot to your team by following step 14. 
+3. Create Lambda deployment packages by creating zip archives of the four python files in the source directory.
+   1. Download the hour python files in the source directory [https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source](https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source)
+   2. Create zip archives. If you are using Linux or MacOS you may use the following command to do so.
    `zip chatbot_cost_explorer01.py.zip chatbot_cost_explorer01.py && zip chatbot_launchtime_checks01.py.zip chatbot_launchtime_checks01.py && zip chatbot_unhealthy_workspace_checks01.py.zip chatbot_unhealthy_workspace_checks01.py && zip chatbot_workspace_latency_checks01.py.zip chatbot_workspace_latency_checks01.py`
-   3. The zip files **must** be named as chatbot_cost_explorer01.py.zip, chatbot_launchtime_checks01.py.zip, chatbot_unhealthy_workspace_checks01.py.zip and chatbot_workspace_latency_checks01.py.zip. 
-4. Create an S3 bucket in the EUC account and upload zip files you created in the previous step with the chatbot.yaml file. The files should appear in the bucket as S3BucketName/chatbot_cost_explorer01.py.zip.
+   3. The zip archives **must** be named as chatbot_cost_explorer01.py.zip, chatbot_launchtime_checks01.py.zip, chatbot_unhealthy_workspace_checks01.py.zip and chatbot_workspace_latency_checks01.py.zip. 
+4. Create an S3 bucket in the EUC account and upload zip archives you created in the previous step along with the chatbot.yaml file. The files should appear in the bucket as S3BucketName/chatbot_cost_explorer01.py.zip.
 ![Contents in S3 Bucket](/images/s3bucket.jpg "Contents of S3 Bucket")
 5. Take note of the S3 Object URL of the chatbot.yaml cloudformation template and the name of the bucket. For example: https://BucketName.s3.Region.amazonaws.com/chatbot.yaml
 6. In the EUC AWS account, navigate to the CloudFormation console and create a new stack using the S3 Object URL of the chatbot.yaml file and the S3 bucket name.
