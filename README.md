@@ -26,7 +26,7 @@ follow the instructions in Step 1: Setting up AWS Chatbot with Slack. **https://
    1. Follow steps 1 to 5.
    2. Add AWS Chatbot to your team by following step 14. 
 3. Create Lambda deployment packages by creating zip archives of the four python files in the source directory.
-   1. Download the hour python files in the source directory [https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source](https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source)
+   1. Download the hour python files in the source directory [**https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source**](https://github.com/aws-samples/aws-chatbot-for-end-user-computing/tree/main/source)
    2. Create zip archives. If you are using Linux or MacOS you may use the following command to do so.
    `zip chatbot_cost_explorer01.py.zip chatbot_cost_explorer01.py && zip chatbot_launchtime_checks01.py.zip chatbot_launchtime_checks01.py && zip chatbot_unhealthy_workspace_checks01.py.zip chatbot_unhealthy_workspace_checks01.py && zip chatbot_workspace_latency_checks01.py.zip chatbot_workspace_latency_checks01.py`
    3. The zip archives **must** be named as chatbot_cost_explorer01.py.zip, chatbot_launchtime_checks01.py.zip, chatbot_unhealthy_workspace_checks01.py.zip and chatbot_workspace_latency_checks01.py.zip. 
