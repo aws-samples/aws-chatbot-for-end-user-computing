@@ -6,7 +6,7 @@ This serves as README for the blogpost **Monitor and automate Amazon EUC with AW
 
 Prerequisites 
 -------------
-1. AWS account access with permissions to create CloudFormation stack, Lambda functions, SNS topic, IAM role and policies.
+1. AWS account with access to the console and CLI and permissions to create CloudFormation stacks, Lambda functions, SNS topics, IAM roles, IAM policies, and CloudWatch alarms.
 2. Microsoft Teams or Slack information.
    1. **Microsoft Teams**
       - Note down the Tenant ID, Team ID and Channel ID. Refer to the screenshots below. 
