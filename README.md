@@ -52,6 +52,6 @@ Understanding AWS chabot permissions
 --------
 This solution creates an IAM role and policy for the AWS chatbot to interact with resources in your account. Please review and make amendments to IAM and guardrail policies if required to adhere to your organisation's security posture. Refer https://docs.aws.amazon.com/chatbot/latest/adminguide/understanding-permissions.html
 
-LICENSE
+License
 -------------
 This library is licensed under the MIT-0 License. See the LICENSE file.
